@@ -21,23 +21,23 @@ The POST methos sends an authenticated POST request to Google, and fires a `fusi
 
 A small printf variant to help formatting the SQL queries. It matches regular expresssions in a string to index items in a following array.
 
-*Example:*
+**Example:**
 
 ```
-this.format('select * from {0} where ROWID = '{1}', [**TABLE_ID**, **ROWID**]);
+this.format('select * from {0} where ROWID = '{1}', [{TABLE_ID}, {ROWID}]);
 ```
 
 will return .. 
 
 ```
-select * from **TABLE_ID** where ROWID = '**ROW_ID**
+select * from {TABLE_ID} where ROWID = '{ROW_ID}'
 ```
 
 ### toNestedObject
 
 This function helps turn flat object, like those created by serializing forms, and returns a nested object by the path of each key.
 
-*Example:*
+**Example:**
 
 Starting with an html form ...
 
@@ -50,8 +50,8 @@ Serializing this form with Polymer's help will return this ...
 
 ```
 foo: {
-  'name.first': **VALUE**,
-  'name.last': **VALUE**
+  'name.first': {VALUE},
+  'name.last': {VALUE}
 }
 ```
 
@@ -60,8 +60,8 @@ Running that return through the `.toNestedObject(foo)` function will return ...
 ```
 foo: {
   name: {
-    first: **VALUE**,
-    last: **VALUE**
+    first: {VALUE},
+    last: {VALUE}
   }
 }
 ```
