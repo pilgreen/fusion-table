@@ -1,0 +1,144 @@
+<!--
+Google Fusion Table Wrapper
+created 2015-08-07
+© Copyright 2015 The Kansas City Star. All Rights Reserved.
+-->
+
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/google-signin/google-signin-aware.html">
+
+<dom-module id="fusion-table">
+  <style>
+    :host {
+      display: none;
+    }
+  </style>
+
+  <template>
+    <iron-ajax id="GET"
+      url="https://www.googleapis.com/fusiontables/v2/query"
+      handle-as="json"
+      on-response="_handleGET"
+      on-error="_handleError"></iron-ajax>
+
+    <iron-ajax id="POST"
+      method="POST"
+      url="https://www.googleapis.com/fusiontables/v2/query"
+      on-response="_handlePOST"
+      on-error="_handleError"></iron-ajax>
+
+    <google-signin-aware
+      id="user"
+      scopes="[[scopes]]"></google-signin-aware>
+  </template>
+</dom-module>
+
+<script>
+  var user;
+
+  Polymer({
+    is: 'fusion-table',
+
+    properties: {
+      scopes: {
+        type: String,
+        value: 'https://www.googleapis.com/auth/fusiontables'
+      }
+    },
+
+    listeners: {
+      'google-signin-aware-success': '_onSigninSuccess',
+    },
+
+    /**
+     * A printf variant to help in formatting long queries
+     *
+     * Example: this.format('select * from {0} where ROWID = '{1}', [TABLE_ID, ROWID]);
+     * @param {String} string The base string to append items into
+     * @param {Array} replacements The items to inject into the string, by numerical index
+     * @returns {String} The formatted string
+     */
+
+    format: function(string, replacements) {
+      return string.replace(/{(\d+)}/g, function(match, number) { 
+        return typeof replacements[number] != 'undefined' ? replacements[number] : match;
+      });
+    },
+
+    /**
+     * Takes a flat object and creates a nested one by the name of the key.
+     * This helps with forms specifically, where input names can be nested with a `.` character.
+     * @param {Object} obj A flat object
+     * @return {Object} A nested object by the path of the key
+     */
+
+    toNestedObject: function(obj) {
+      var keys = Object.keys(obj),
+          scope = {}; 
+
+      for(var i = 0, len = keys.length; i < len; i++) {
+        var keyScope = scope;
+        var key = keys[i];
+
+        var parts = key.split(".");
+        var lastBit = parts[parts.length - 1];
+
+        for(var p = 0, p_len = parts.length; p < p_len; p++) {
+          var bit = parts[p];
+          if(bit == lastBit) {
+            keyScope[bit] = obj[key];
+          } else {
+            keyScope = keyScope[bit] = keyScope[bit] || {};
+          }
+        }
+      }
+
+      return scope;
+    },
+
+    /**
+     * Methods to communicate with the file
+     */
+
+    GET: function(query) {
+      this.$.GET.params['sql'] = query;
+      this.$.GET.generateRequest();
+    },
+
+    POST: function(query) {
+      this.$.POST.params['sql'] = query;
+      this.$.POST.generateRequest();
+    },
+
+    /**
+     * Appends the authorization header on successful signin
+     */
+
+    _onSigninSuccess: function(e, detail) {
+      var oauthToken = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse();
+      var headers = {
+        'Authorization': 'Bearer ' + oauthToken.access_token
+      }
+
+      this.$.GET.headers = headers;
+      this.$.POST.headers = headers;
+      this.fire('fusion-table-ready');
+    },
+
+    /**
+     * Events for ajax transmissions
+     */
+
+    _handleError: function(e) {
+      this.fire('fusion-table-error', e.detail.error.message);
+    },
+
+    _handleGET: function(e) {
+      this.fire('fusion-table-get', e.detail.response);
+    },
+
+    _handlePOST: function(e) {
+      this.fire('fusion-table-post', e.detail.response);
+    }
+  });
+</script>

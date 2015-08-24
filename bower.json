@@ -1,0 +1,22 @@
+{
+  "name": "fusion-table",
+  "version": "0.0.0",
+  "homepage": "https://github.com/pilgreen/fusion-table",
+  "authors": [
+    "Jay Pilgreen <jpilgreen@kcstar.com>"
+  ],
+  "description": "A Polymer v1.0 component for interacting with Google Fusion Tables",
+  "main": "fusion-table.html",
+  "keywords": [
+    "Polymer",
+    "web",
+    "component",
+    "Fusion",
+    "Table"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "iron-ajax": "PolymerElements/iron-ajax#~1.0.4",
+    "google-signin": "GoogleWebComponents/google-signin#~1.0.3"
+  }
+}
