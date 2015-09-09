@@ -66,7 +66,7 @@ foo: {
 }
 ```
 
-This comes in handy when I want to store complex object as strigified JSON.
+This comes in handy when storing complex object as strigified JSON.
 
 ## Notes:
 
