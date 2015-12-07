@@ -19,7 +19,7 @@
     "bower_components"
   ],
   "dependencies": {
-    "iron-ajax": "PolymerElements/iron-ajax#~1.0.4",
-    "google-signin": "GoogleWebComponents/google-signin#~1.0.3"
+    "iron-ajax": "PolymerElements/iron-ajax#1.x",
+    "google-signin": "GoogleWebComponents/google-signin#1.x"
   }
 }
